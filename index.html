@@ -1044,6 +1044,13 @@ html.theme-azafran .mesa-tile.busy{box-shadow:0 8px 0 #c44600;}
 html.theme-azafran .mesa-num{font-weight:900;font-style:italic;}
 html.theme-azafran .floor-wrap{background-image:repeating-linear-gradient(45deg, rgba(242,92,5,.035) 0 12px, transparent 12px 24px) !important;}
 
+/* Botón de pantalla completa (Cocina y Caja) */
+.fs-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;cursor:pointer;
+  font-family:inherit;font-size:12px;font-weight:800;white-space:nowrap;
+  background:var(--yellow);color:var(--on-yellow);border:1px solid var(--yellow);}
+.fs-btn:hover{filter:brightness(1.05);transform:translateY(-1px);}
+.kitchen-topbar .fs-btn{margin-left:auto;margin-right:10px;}
+
 /* Urdu */
 html[lang="ur"] body{font-family:'Noto Naskh Arabic','DM Sans',sans-serif;}
 html[lang="ur"] :is(h1,h2,h3,p,small,.name,.desc,.kl-name,.mesa-word,.mesa-state,.items-sub,.eyebrow,.cat-btn,.items-heading){unicode-bidi:plaintext;}
@@ -1092,6 +1099,7 @@ html[lang="ur"] .mesa-word{letter-spacing:0;}
       </div>
       <span class="sync-badge off" id="sync-badge">🔶 Modo local</span>
       <button class="session-chip" id="connect-drawer-btn" hidden>🗄️ Conectar caja</button>
+      <button class="fs-btn" id="fs-btn-home" hidden>⛶ <span class="fs-label">Pantalla completa</span></button>
       <button class="session-chip" id="change-session-btn" hidden>
         <span id="session-chip-label">Sesión</span> <b id="current-session-label">----</b> · <span id="change-session-label">Cambiar</span>
       </button>
@@ -1193,6 +1201,7 @@ html[lang="ur"] .mesa-word{letter-spacing:0;}
           <small id="kitchen-tagline">Pedidos pendientes</small>
         </div>
       </div>
+      <button class="fs-btn" id="fs-btn-kitchen">⛶ <span class="fs-label">Pantalla completa</span></button>
       <div class="role-switch">
         <button class="role-btn" data-role="cocina">🍳 <span>Cocina</span></button>
         <button class="role-btn" data-role="comanda">📋 <span>Comanda</span></button>
@@ -1616,7 +1625,7 @@ const I18N = {
     toastNoSaldo: "No hay pedidos abiertos en sala.",
     toastTickets: "Tickets aparcados: función no incluida en esta demo.",
     toastJuntar: "Juntar mesas: función no incluida en esta demo.",
-    roleCaja: "Caja", roleCocina: "Cocina", rolePizza: "Pizza", rolePostre: "Postre", roleComanda: "Comanda",
+    fsEnter: "Pantalla completa", fsExit: "Salir de pantalla completa", roleCaja: "Caja", roleCocina: "Cocina", rolePizza: "Pizza", rolePostre: "Postre", roleComanda: "Comanda",
     kitchenTagline: "Pedidos pendientes",
     kitchenEmpty: "No hay platos pendientes.",
     kitchenTick: "Marcar como hecho",
@@ -1700,7 +1709,7 @@ const I18N = {
     toastNoSaldo: "ہال میں کوئی کھلا آرڈر نہیں۔",
     toastTickets: "یہ فیچر شامل نہیں۔",
     toastJuntar: "یہ فیچر شامل نہیں۔",
-    roleCaja: "کیش", roleCocina: "کچن", rolePizza: "کچن", rolePostre: "کچن", roleComanda: "آرڈر",
+    fsEnter: "فل اسکرین", fsExit: "فل اسکرین بند کریں", roleCaja: "کیش", roleCocina: "کچن", rolePizza: "کچن", rolePostre: "کچن", roleComanda: "آرڈر",
     kitchenTagline: "باقی آرڈر",
     kitchenEmpty: "کوئی کھانا باقی نہیں۔",
     kitchenTick: "تیار ہو گیا",
@@ -1784,7 +1793,7 @@ const I18N = {
     toastNoSaldo: "No open orders on the floor.",
     toastTickets: "Parked tickets: not included in this demo.",
     toastJuntar: "Merge tables: not included in this demo.",
-    roleCaja: "Cashier", roleCocina: "Kitchen", rolePizza: "Pizza", rolePostre: "Desserts", roleComanda: "Orders",
+    fsEnter: "Full screen", fsExit: "Exit full screen", roleCaja: "Cashier", roleCocina: "Kitchen", rolePizza: "Pizza", rolePostre: "Desserts", roleComanda: "Orders",
     kitchenTagline: "Pending orders",
     kitchenEmpty: "No pending dishes.",
     kitchenTick: "Mark as done",
@@ -2078,12 +2087,48 @@ function showRoleView(){
   }
   updateRoleButtons();
 }
+/* ===================== PANTALLA COMPLETA (Cocina y Caja) ===================== */
+function fsSupported(){
+  const el = document.documentElement;
+  return !!(el.requestFullscreen || el.webkitRequestFullscreen);
+}
+function isFullscreen(){
+  return !!(document.fullscreenElement || document.webkitFullscreenElement);
+}
+function toggleFullscreen(){
+  const el = document.documentElement;
+  try{
+    if(isFullscreen()){
+      (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    } else {
+      const req = el.requestFullscreen || el.webkitRequestFullscreen;
+      const r = req.call(el);
+      if(r && r.catch) r.catch(()=>{});
+    }
+  }catch(e){}
+}
+function updateFullscreenButtons(){
+  const t = I18N[currentLang];
+  const ok = fsSupported();
+  const homeBtn = document.getElementById("fs-btn-home");
+  const kitBtn = document.getElementById("fs-btn-kitchen");
+  if(homeBtn) homeBtn.hidden = !ok || appRole !== "caja";
+  if(kitBtn) kitBtn.hidden = !ok;
+  document.querySelectorAll(".fs-btn .fs-label").forEach(el=>{
+    el.textContent = isFullscreen() ? t.fsExit : t.fsEnter;
+  });
+}
+document.querySelectorAll(".fs-btn").forEach(b=>b.addEventListener("click", toggleFullscreen));
+document.addEventListener("fullscreenchange", updateFullscreenButtons);
+document.addEventListener("webkitfullscreenchange", updateFullscreenButtons);
+
 function updateRoleButtons(){
   document.querySelectorAll(".role-btn").forEach(b=>{
     b.classList.toggle("active", b.dataset.role === appRole);
   });
   const drawerBtn = document.getElementById("connect-drawer-btn");
   if(drawerBtn) drawerBtn.hidden = appRole !== "caja";
+  updateFullscreenButtons();
   const t = I18N[currentLang];
   if(appRole === "cocina" || appRole === "pizza" || appRole === "postre"){
     const marks = { cocina:"🍳", pizza:"🍕", postre:"🍰" };
