@@ -1044,6 +1044,29 @@ html.theme-azafran .mesa-tile.busy{box-shadow:0 8px 0 #c44600;}
 html.theme-azafran .mesa-num{font-weight:900;font-style:italic;}
 html.theme-azafran .floor-wrap{background-image:repeating-linear-gradient(45deg, rgba(242,92,5,.035) 0 12px, transparent 12px 24px) !important;}
 
+/* Zona de pedidos (para llevar / domicilio) */
+.pedidos-zone{display:flex;flex-direction:column;gap:10px;padding:12px;border-radius:18px;
+  border:2px dashed var(--stamp);background:rgba(var(--accent-rgb),0.04);min-width:0;align-self:start;}
+.pz-head{display:flex;flex-direction:column;line-height:1.1;}
+.pz-head b{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--stamp);}
+.pz-head small{font-size:11px;font-weight:600;color:var(--text-lo);}
+.pz-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;}
+.pz-slot{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  padding:8px 2px;border-radius:12px;cursor:pointer;font-family:inherit;min-width:0;
+  background:var(--card);border:2px solid var(--tile-border);color:var(--text-hi);transition:transform .12s;}
+.pz-slot:hover{transform:translateY(-2px);}
+.pz-num{font-family:var(--font-display);font-size:22px;font-weight:800;line-height:1;}
+.pz-state{font-size:9.5px;font-weight:700;color:var(--text-lo);white-space:nowrap;}
+.pz-slot.busy{background:var(--stamp);border-color:var(--stamp);color:#fff;}
+.pz-slot.busy .pz-state{color:var(--on-yellow);background:var(--yellow);border-radius:999px;padding:1px 6px;}
+@media (max-width:760px){
+  .pedidos-zone{padding:8px;gap:6px;border-radius:12px;}
+  .pz-head b{font-size:16px;} .pz-head small{display:none;}
+  .pz-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;}
+  .pz-num{font-size:16px;} .pz-slot{padding:5px 1px;border-radius:9px;}
+  .pz-state{font-size:8px;}
+}
+
 /* Botón de pantalla completa (Cocina y Caja) */
 .fs-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;cursor:pointer;
   font-family:inherit;font-size:12px;font-weight:800;white-space:nowrap;
@@ -1598,7 +1621,7 @@ const I18N = {
     themeNames: ["🎨 Diseño: Man-o-Salwa", "🎨 Diseño: Noche", "🎨 Diseño: Verde Pakistán", "🎨 Diseño: Azafrán"],
     btnTickets: "Tickets aparcados", btnJuntar: "Juntar mesas",
     back: "← Mesas",
-    comanda: "Comanda", comandaBarra: "Comanda de barra",
+    comanda: "Comanda", comandaBarra: "Pedido para llevar",
     searchPh: "Buscar plato, ingrediente…",
     pay: "✓ Pagado", clear: "Vaciar mesa",
     resultsHeading: "Resultados",
@@ -1625,7 +1648,7 @@ const I18N = {
     toastNoSaldo: "No hay pedidos abiertos en sala.",
     toastTickets: "Tickets aparcados: función no incluida en esta demo.",
     toastJuntar: "Juntar mesas: función no incluida en esta demo.",
-    fsEnter: "Pantalla completa", fsExit: "Salir de pantalla completa", roleCaja: "Caja", roleCocina: "Cocina", rolePizza: "Pizza", rolePostre: "Postre", roleComanda: "Comanda",
+    pedidosTitle: "🛵 Pedidos", pedidosSub: "Para llevar / domicilio", fsEnter: "Pantalla completa", fsExit: "Salir de pantalla completa", roleCaja: "Caja", roleCocina: "Cocina", rolePizza: "Pizza", rolePostre: "Postre", roleComanda: "Comanda",
     kitchenTagline: "Pedidos pendientes",
     kitchenEmpty: "No hay platos pendientes.",
     kitchenTick: "Marcar como hecho",
@@ -1660,7 +1683,7 @@ const I18N = {
     historyTitle: "Historial de pagos",
     historyCount: (n)=> n + " pago(s) registrados",
     historyEmpty: "Todavía no hay pagos registrados.<br>Cuando marques una mesa como pagada, aparecerá aquí.",
-    mesaLabel: "Mesa", barraLabel: "Barra",
+    mesaLabel: "Mesa", barraLabel: "Pedido",
     viewOrder: "Ver comanda",
     btnCerrarDia: "🔒 Cerrar día",
     confirmCloseDay: "¿Cerrar el día? Se vaciarán todas las mesas y la barra, y se borrará todo el historial de pagos de hoy. Esta acción no se puede deshacer.",
@@ -1682,7 +1705,7 @@ const I18N = {
     themeNames: ["🎨 ڈیزائن: من و سلویٰ", "🎨 ڈیزائن: رات", "🎨 ڈیزائن: سبز پاکستان", "🎨 ڈیزائن: زعفران"],
     btnTickets: "رکھے ہوئے ٹکٹ", btnJuntar: "میزیں ملائیں",
     back: "→ میزیں",
-    comanda: "آرڈر", comandaBarra: "بار کا آرڈر",
+    comanda: "آرڈر", comandaBarra: "ٹیک اوے آرڈر",
     searchPh: "کھانا تلاش کریں…",
     pay: "✓ ادا ہو گیا", clear: "میز خالی کریں",
     resultsHeading: "نتائج",
@@ -1709,7 +1732,7 @@ const I18N = {
     toastNoSaldo: "ہال میں کوئی کھلا آرڈر نہیں۔",
     toastTickets: "یہ فیچر شامل نہیں۔",
     toastJuntar: "یہ فیچر شامل نہیں۔",
-    fsEnter: "فل اسکرین", fsExit: "فل اسکرین بند کریں", roleCaja: "کیش", roleCocina: "کچن", rolePizza: "کچن", rolePostre: "کچن", roleComanda: "آرڈر",
+    pedidosTitle: "🛵 آرڈرز", pedidosSub: "ٹیک اوے / ڈیلیوری", fsEnter: "فل اسکرین", fsExit: "فل اسکرین بند کریں", roleCaja: "کیش", roleCocina: "کچن", rolePizza: "کچن", rolePostre: "کچن", roleComanda: "آرڈر",
     kitchenTagline: "باقی آرڈر",
     kitchenEmpty: "کوئی کھانا باقی نہیں۔",
     kitchenTick: "تیار ہو گیا",
@@ -1744,7 +1767,7 @@ const I18N = {
     historyTitle: "ادائیگیوں کی ہسٹری",
     historyCount: (n)=> n + " ادائیگیاں",
     historyEmpty: "ابھی کوئی ادائیگی نہیں۔<br>میز ادا ہونے پر یہاں نظر آئے گی۔",
-    mesaLabel: "میز", barraLabel: "بار",
+    mesaLabel: "میز", barraLabel: "آرڈر",
     viewOrder: "آرڈر دیکھیں",
     btnCerrarDia: "🔒 دن بند کریں",
     confirmCloseDay: "دن بند کریں؟ سب میزیں خالی ہو جائیں گی اور آج کی ادائیگیوں کی ہسٹری مٹ جائے گی۔ یہ واپس نہیں ہو گا۔",
@@ -1766,7 +1789,7 @@ const I18N = {
     themeNames: ["🎨 Theme: Man-o-Salwa", "🎨 Theme: Night", "🎨 Theme: Pakistan green", "🎨 Theme: Saffron"],
     btnTickets: "Parked tickets", btnJuntar: "Merge tables",
     back: "← Tables",
-    comanda: "Order", comandaBarra: "Bar order",
+    comanda: "Order", comandaBarra: "Takeaway order",
     searchPh: "Search dish, ingredient…",
     pay: "✓ Paid", clear: "Clear table",
     resultsHeading: "Results",
@@ -1793,7 +1816,7 @@ const I18N = {
     toastNoSaldo: "No open orders on the floor.",
     toastTickets: "Parked tickets: not included in this demo.",
     toastJuntar: "Merge tables: not included in this demo.",
-    fsEnter: "Full screen", fsExit: "Exit full screen", roleCaja: "Cashier", roleCocina: "Kitchen", rolePizza: "Pizza", rolePostre: "Desserts", roleComanda: "Orders",
+    pedidosTitle: "🛵 Orders", pedidosSub: "Takeaway / delivery", fsEnter: "Full screen", fsExit: "Exit full screen", roleCaja: "Cashier", roleCocina: "Kitchen", rolePizza: "Pizza", rolePostre: "Desserts", roleComanda: "Orders",
     kitchenTagline: "Pending orders",
     kitchenEmpty: "No pending dishes.",
     kitchenTick: "Mark as done",
@@ -1828,7 +1851,7 @@ const I18N = {
     historyTitle: "Payment history",
     historyCount: (n)=> n + " payment(s) recorded",
     historyEmpty: "No payments recorded yet.<br>Once you mark a table as paid, it will show up here.",
-    mesaLabel: "Table", barraLabel: "Bar",
+    mesaLabel: "Table", barraLabel: "Order",
     viewOrder: "View order",
     btnCerrarDia: "🔒 Close day",
     confirmCloseDay: "Close the day? All tables and the bar will be cleared, and today's whole payment history will be deleted. This can't be undone.",
@@ -1859,7 +1882,9 @@ const FLOOR_LAYOUT = [
   { id:9,  label:"9",  col:3, row:3 },
   { id:10, label:"10", col:4, row:3 },
 ];
-const BARRA_LAYOUT = [];
+// Pedidos para llevar / a domicilio: huecos pequeños P1-P6 (ids 501-506),
+// en el espacio libre de arriba a la izquierda del plano.
+const BARRA_LAYOUT = [501,502,503,504,505,506].map(id=>({ id }));
 const ALL_IDS = [...FLOOR_LAYOUT.map(t=>t.id), ...BARRA_LAYOUT.map(b=>b.id)];
 
 let orders = {};              // orders[tableId] = { itemId: qty }
@@ -1904,7 +1929,7 @@ function wholeWordIncludes(text, query){
   return re.test(t);
 }
 function isBarra(id){ return id >= 500; }
-function tableLabel(id){ return (isBarra(id) ? I18N[currentLang].barraLabel : I18N[currentLang].mesaLabel) + " " + id; }
+function tableLabel(id){ return isBarra(id) ? I18N[currentLang].barraLabel + " " + (id - 500) : I18N[currentLang].mesaLabel + " " + id; }
 
 let history = [];             // pagos registrados: { id, table, ts, items:[{name,qty,price}], total }
 let historyCounter = 1;
@@ -2322,6 +2347,24 @@ function renderHome(){
     tile.addEventListener("click", ()=>openTable(t.id));
     floor.appendChild(tile);
   });
+
+  // Zona pequeña de pedidos (para llevar / domicilio)
+  const zone = document.createElement("div");
+  zone.className = "pedidos-zone";
+  zone.style.gridColumn = "1";
+  zone.style.gridRow = "1 / span 2";
+  zone.innerHTML = `<div class="pz-head"><b>${tr.pedidosTitle}</b><small>${tr.pedidosSub}</small></div><div class="pz-grid"></div>`;
+  const grid = zone.querySelector(".pz-grid");
+  BARRA_LAYOUT.forEach(b=>{
+    const busy = tableCount(b.id) > 0;
+    const slot = document.createElement("button");
+    slot.type = "button";
+    slot.className = "pz-slot" + (busy ? " busy" : "");
+    slot.innerHTML = `<span class="pz-num">P${b.id - 500}</span><span class="pz-state">${busy ? eur(tableTotal(b.id)) : tr.keyFree}</span>`;
+    slot.addEventListener("click", ()=>openTable(b.id));
+    grid.appendChild(slot);
+  });
+  floor.appendChild(zone);
 }
 
 /* ===================== CONFIRM / TOAST (propios, sin confirm()/alert() nativos) ===================== */
@@ -3122,7 +3165,7 @@ function openTable(n){
   if(appRole !== "comanda" && appRole !== "caja") return; // Cocina/Pizza no pueden tomar pedidos.
   // En Comanda, si la mesa está vacía y no tiene personas asignadas todavía,
   // primero se pregunta cuántas son antes de abrir la carta.
-  if(appRole === "comanda" && tableCount(n) === 0 && !getTablePeople(n)){
+  if(appRole === "comanda" && !isBarra(n) && tableCount(n) === 0 && !getTablePeople(n)){
     openPeopleAssignDialog(n, ()=> openTableNow(n));
     return;
   }
@@ -3136,7 +3179,7 @@ function openTableNow(n){
   document.getElementById("table-view").hidden = false;
   document.getElementById("mobile-ticket-toggle").hidden = false;
   document.getElementById("search-input").value = "";
-  document.getElementById("tv-num").textContent = n;
+  document.getElementById("tv-num").textContent = isBarra(n) ? "P" + (n - 500) : n;
   document.getElementById("tv-label").textContent = isBarra(n) ? I18N[currentLang].comandaBarra : I18N[currentLang].comanda;
   document.getElementById("ticket-mesa-num").textContent = tableLabel(n);
   const localeMap = { es:"es-ES", ca:"ca-ES", en:"en-GB" };
